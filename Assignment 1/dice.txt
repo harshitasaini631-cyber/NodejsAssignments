@@ -1,0 +1,11 @@
+
+Dice:1
+Dice:5
+Dice:4
+Dice:3
+Dice:5
+Dice:4
+Dice:6
+Dice:6
+Dice:3
+Dice:2
