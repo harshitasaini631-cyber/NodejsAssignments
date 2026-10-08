@@ -2,18 +2,16 @@
 
 const express = require("express");
 const { connection } = require("./db");
-// const { studentRouter } = require("./routes/student.route");
-// const { trainerRouter } = require("./routes/trainer.route");
-
+const { productRouter } = require("./routes/product.route");
+const { errorHandler } = require("./middleware/errorHandler.js");
 // Step -2 App creation
 const app = express();
 
 // Middlewere access req.body ke data ko
 app.use(express.json());
 
-// app.use("/student", studentRouter);
-// app.use("/trainer", trainerRouter);
-
+app.use("/products", productRouter);
+app.use(errorHandler);
 // Step -4 Making Routes/ REST API
 // API/ Routes
 
