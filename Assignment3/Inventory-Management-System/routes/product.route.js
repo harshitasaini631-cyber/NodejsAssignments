@@ -6,14 +6,62 @@ const productRouter = express.Router();
 
 productRouter.get("/read", async (req, res) => {
   try {
-    const products = await productModel.find();
 
-    res.send(products);
+    const {
+      category,
+      sort,
+      page = 1,
+      limit = 10
+    } = req.query;
+
+
+    // Filtering
+    const filter = {};
+
+    if (category) {
+      filter.category = category;
+    }
+
+
+    // Pagination
+    const skip = (page - 1) * limit;
+
+
+    // Get products
+    const products = await productModel
+      .find(filter)
+      .sort(sort ? { [sort]: 1 } : {})
+      .skip(skip)
+      .limit(Number(limit));
+
+
+    // Total number of products
+    const total = await productModel.countDocuments(filter);
+
+
+    // Total pages
+    const totalPages = Math.ceil(total / limit);
+
+
+    res.send({
+      total: total,
+      page: Number(page),
+      totalPages: totalPages,
+      count: products.length,
+      products: products
+    });
+
   } catch (error) {
-    res.send({ msg: "Something went wrong" });
+
+    console.log(error);
+
+    res.send({
+      msg: "Something went wrong",
+      error: error.message
+    });
+
   }
 });
-
 
 productRouter.get("/read/:id", async (req, res) => {
   const { id } = req.params;
