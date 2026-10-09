@@ -63,6 +63,30 @@ productRouter.get("/read", async (req, res) => {
   }
 });
 
+// GET: Low stock products
+productRouter.get("/low-stock", async (req, res) => {
+  try {
+    const products = await productModel.find({
+      $expr: {
+        $lte: ["$quantity", "$reorderLevel"]
+      }
+    });
+
+    res.send({
+      count: products.length,
+      lowStockItems: products
+    });
+
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).send({
+      msg: "Something went wrong",
+      error: error.message
+    });
+  }
+});
+
 productRouter.get("/read/:id", async (req, res) => {
   const { id } = req.params;
 
