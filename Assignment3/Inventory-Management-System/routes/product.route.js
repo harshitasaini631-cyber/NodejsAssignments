@@ -87,6 +87,50 @@ productRouter.get("/low-stock", async (req, res) => {
   }
 });
 
+// GET: Category-wise inventory summary
+productRouter.get("/summary", async (req, res) => {
+  try {
+    const summary = await productModel.aggregate([
+      {
+        $group: {
+          _id: "$category",
+
+          totalItems: {
+            $sum: 1
+          },
+
+          totalQuantity: {
+            $sum: "$quantity"
+          },
+
+          totalStockValue: {
+            $sum: {
+              $multiply: ["$price", "$quantity"]
+            }
+          },
+
+          avgPrice: {
+            $avg: "$price"
+          }
+        }
+      }
+    ]);
+
+    res.send({
+      categories: summary.length,
+      summary: summary
+    });
+
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).send({
+      msg: "Something went wrong",
+      error: error.message
+    });
+  }
+});
+
 productRouter.get("/read/:id", async (req, res) => {
   const { id } = req.params;
 
